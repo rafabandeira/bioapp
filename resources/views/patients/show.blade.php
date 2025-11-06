@@ -15,9 +15,22 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 text-center">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Composição Corporal Atual</h3>
-                    <img src="{{ $avatarPath }}" alt="Avatar da composição corporal" class="mx-auto h-64 w-auto">
+                <div class="p-6 text-gray-900">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Avatar - OMS</h3>
+                    <dt class="text-sm font-medium text-gray-500">IMC</dt>
+                    <dd class="mt-1 text-sm text-gray-900">
+                        @if($bmi)
+                            <span class="font-bold text-lg {{ $bmiColorClass }}">
+                                {{ $bmi }}
+                            </span>
+                            <span class="text-sm {{ $bmiColorClass }}">
+                                ({{ $bmiClassification }})
+                            </span>
+                        @else
+                            N/A (Altura/Peso não registrados)
+                        @endif
+                    </dd>
+                    <img src="{{ asset('avatars/' . $avatarName . '.png') }}" alt="Composição Corporal" class="block mx-auto">
                 </div>
             </div>
 
@@ -53,8 +66,8 @@
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Peso</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                @if($latestBio)
-                                    {{ $latestBio->weight }} kg
+                                @if($latestRecord)
+                                    {{ $latestRecord->weight }} kg
                                 @else
                                     N/A
                                 @endif
@@ -80,9 +93,9 @@
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Gordura Corporal</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                @if($latestBio && $latestBio->body_fat_percentage)
+                                @if($latestRecord && $latestRecord->body_fat_percentage)
                                     <span class="font-bold text-lg {{ $bfpColorClass }}">
-                                        {{ $latestBio->body_fat_percentage }} %
+                                        {{ $latestRecord->body_fat_percentage }} %
                                     </span>
                                     <span class="text-sm {{ $bfpColorClass }}">
                                         ({{ $bfpClassification }})
@@ -96,9 +109,9 @@
 <div>
                             <dt class="text-sm font-medium text-gray-500">Músculo Esquelético</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                @if($latestBio && $latestBio->skeletal_muscle_percentage)
+                                @if($latestRecord && $latestRecord->skeletal_muscle_percentage)
                                     <span class="font-bold text-lg {{ $skmColorClass }}">
-                                        {{ $latestBio->skeletal_muscle_percentage }} %
+                                        {{ $latestRecord->skeletal_muscle_percentage }} %
                                     </span>
                                     <span class="text-sm {{ $skmColorClass }}">
                                         ({{ $skmClassification }})
@@ -112,9 +125,9 @@
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Gordura Visceral (Nível)</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                @if($latestBio && $latestBio->visceral_fat_level)
+                                @if($latestRecord && $latestRecord->visceral_fat_level)
                                     <span class="font-bold text-lg {{ $vflColorClass }}">
-                                        {{ $latestBio->visceral_fat_level }}
+                                        {{ $latestRecord->visceral_fat_level }}
                                     </span>
                                     <span class="text-sm {{ $vflColorClass }}">
                                         ({{ $vflClassification }})
@@ -142,9 +155,9 @@
                             <dt class="text-sm font-medium text-gray-500">Idade Metabólica</dt>
                             <dd class="mt-1 text-sm text-gray-900">
                                 {{-- Usar a propriedade body_age lida pelo Controller --}}
-                                @if($latestBio && isset($latestBio->body_age))
+                                @if($latestRecord && isset($latestRecord->body_age))
                                     <span class="font-bold text-lg {{ $metabolicAgeColorClass }}">
-                                        {{ $latestBio->body_age }} anos
+                                        {{ $latestRecord->body_age }} anos
                                     </span>
                                     <span class="text-sm {{ $metabolicAgeColorClass }}">
                                         ({{ $metabolicAgeClassification }})

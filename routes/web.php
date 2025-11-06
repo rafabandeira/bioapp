@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\Patient\BioimpedanceRecordController;
 use App\Http\Controllers\Patient\MeasurementController;
-use App\Http\Controllers\Patient\EvaluationController; // <-- NOVO
+use App\Http\Controllers\Patient\EvaluationController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,9 +20,21 @@ Route::get('/', function () {
 // Rotas que EXIGEM autenticação
 Route::middleware('auth')->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+         ->name('dashboard');
+
+    // Gráfico Novos PACIENTES
+    Route::get('/api/charts/new-patients', [DashboardController::class, 'newPatientsChart'])
+         ->name('api.charts.new-patients');
+         
+    // Gráfico de GÊNERO
+    Route::get('/api/charts/patient-gender', [DashboardController::class, 'patientGenderChart'])
+         ->name('api.charts.patient-gender');
+
+    // Gráfico de distribuição de IMC
+    Route::get('/api/charts/patient-imc-distribution', [DashboardController::class, 'patientImcDistributionChart'])
+         ->name('api.charts.patient-imc-distribution');
 
     // 1. Pacientes (Recurso Pai)
     Route::resource('patients', PatientController::class);

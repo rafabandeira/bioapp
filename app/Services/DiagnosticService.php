@@ -197,40 +197,68 @@ class DiagnosticService
     }
 
     /**
-     * NOVO: Gera o caminho da imagem do avatar com base no %GC e género
-     * Lógica migrada de 'includes/bioimpedancia/metaboxes/avatares.php'
+     * Gera o NOME DO ARQUIVO do avatar com base no IMC, Gordura Corporal e Gênero.
+     *
+     * @param float|null $bmi IMC do paciente
+     * @param float|null $bodyFat Percentual de gordura corporal
+     * @param string|null $gender 'M' ou 'F'
+     * @return string Nome do arquivo do avatar (ex: "m-acima2")
      */
-    public static function generateAvatarPath($bfp, $gender)
+    public static function generateAvatarPath($bmi, $bodyFat, $gender)
     {
-        $basePath = 'avatars/'; // Caminho base em public/avatars/
-        $avatar = $gender == 'M' ? 'm-normal.png' : 'f-normal.png'; // Default
+        // Define avatares padrão para o caso de não haver dados
+        $defaultAvatar = ($gender === 'M') ? 'm-normal' : 'f-normal';
 
-        if (!$bfp || !$gender) {
-            return asset($basePath . $avatar);
+        if (is_null($bmi) || is_null($bodyFat) || is_null($gender)) {
+            // Retorna apenas o nome do arquivo, sem .png
+            return $defaultAvatar;
         }
 
-        if ($gender == 'M') {
-            if ($bfp < 14) $avatar = 'm-abaixo.png';
-            elseif ($bfp <= 17) $avatar = 'm-normal.png';
-            elseif ($bfp <= 20) $avatar = 'm-alto1.png';
-            elseif ($bfp <= 23) $avatar = 'm-alto2.png';
-            elseif ($bfp <= 29) $avatar = 'm-alto3.png';
-            elseif ($bfp <= 34) $avatar = 'm-acima1.png';
-            elseif ($bfp <= 39) $avatar = 'm-acima2.png';
-            else $avatar = 'm-acima3.png';
+        $prefix = ($gender === 'M') ? 'm' : 'f';
+
+        // --- LÓGICA DE DECISÃO (BASEADA EM PADRÕES OMS) ---
+
+        // 1. IMC Abaixo do Peso (< 18.5)
+        if ($bmi < 18.5) {
+            return $prefix . '-abaixo';
         } 
         
-        if ($gender == 'F') {
-            if ($bfp < 21) $avatar = 'f-abaixo.png';
-            elseif ($bfp <= 24) $avatar = 'f-normal.png';
-            elseif ($bfp <= 27) $avatar = 'f-alto1.png';
-            elseif ($bfp <= 30) $avatar = 'f-alto2.png';
-            elseif ($bfp <= 34) $avatar = 'f-alto3.png';
-            elseif ($bfp <= 39) $avatar = 'f-acima1.png';
-            elseif ($bfp <= 44) $avatar = 'f-acima2.png';
-            else $avatar = 'f-acima3.png';
-        }
+        // 2. IMC Normal (18.5 - 24.9)
+        elseif ($bmi < 25) {
+            return $prefix . '-normal';
+        } 
+        
+        // 3. IMC Sobrepeso (25.0 - 29.9) - O SEU CASO (IMC 25)
+        elseif ($bmi < 30) {
+            
+            // Faixas de gordura para Sobrepeso
+            $limit1 = ($gender === 'M') ? 18 : 25; // Limite baixo/normal
+            $limit2 = ($gender === 'M') ? 24 : 32; // Limite normal/alto
 
-        return asset($basePath . $avatar);
+            if ($bodyFat < $limit1) {
+                return $prefix . '-acima1'; // Sobrepeso, baixa gordura (músculo)
+            }
+            if ($bodyFat <= $limit2) {
+                return $prefix . '-acima2'; // Sobrepeso, gordura normal
+            }
+            return $prefix . '-acima3'; // Sobrepeso, gordura alta
+        } 
+        
+        // 4. IMC Obesidade (>= 30)
+        else { // $bmi >= 30
+            
+            // Faixas de gordura para Obesidade
+            $limit1 = ($gender === 'M') ? 26 : 35; // Limite alto
+            $limit2 = ($gender === 'M') ? 30 : 39; // Limite muito alto
+
+            if ($bodyFat < $limit1) {
+                return $prefix . '-alto1';
+            }
+            if ($bodyFat <= $limit2) {
+                return $prefix . '-alto2';
+            }
+            return $prefix . '-alto3';
+        }
     }
+
 }

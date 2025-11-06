@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule; // <-- MUITO IMPORTANTE para o Update
+use Illuminate\Validation\Rule; 
 use App\Services\DiagnosticService;
 use Carbon\Carbon;
 
@@ -69,7 +69,7 @@ class PatientController extends Controller
     }
 
 
-    /**
+   /**
      * Display the specified resource.
      * Mostra o dashboard de um paciente, carregando todos os históricos, calculando o IMC e formatando dados para gráficos.
      */
@@ -81,7 +81,8 @@ class PatientController extends Controller
         
         $patient->load('bioimpedanceRecords', 'measurements', 'evaluations');
         
-        $latestBio = $patient->bioimpedanceRecords->first();
+        // Ordena pela data de criação, do mais novo para o mais antigo
+        $latestRecord = $patient->bioimpedanceRecords()->latest('created_at')->first();
 
         // Variáveis de Diagnóstico
         $bmi = null;
@@ -96,29 +97,32 @@ class PatientController extends Controller
         $tmb = null;
         $metabolicAgeClassification = null;
         $metabolicAgeColorClass = 'text-gray-900';
-        $avatarPath = DiagnosticService::generateAvatarPath(null, $patient->gender);
+        
+        // Define um avatar padrão
+        $avatarPath = DiagnosticService::generateAvatarPath(null, null, $patient->gender);
 
         // Idade Cronológica
         $chronologicalAge = $patient->birth_date ? $patient->birth_date->age : null;
 
         // 1. CÁLCULO DO IMC
-        if ($patient->height && $latestBio && isset($latestBio->weight)) {
+        if ($patient->height && $latestRecord && isset($latestRecord->weight)) {
             $height_m = $patient->height / 100;
-            $weight = $latestBio->weight;
+            $weight = $latestRecord->weight;
             $bmi_value = $weight / ($height_m * $height_m);
-            $bmi = round($bmi_value, 2);
+            $bmi = round($bmi_value, 2); // O IMC é calculado aqui
 
             // 2. CLASSIFICAÇÃO IMC
             $bmiClassification = DiagnosticService::classifyBmi($bmi);
             $bmiColorClass = DiagnosticService::getBmiColorClass($bmiClassification);
         }
 
-        if ($latestBio && $patient->gender && $chronologicalAge) {
+        if ($latestRecord && $patient->gender && $chronologicalAge) {
             $gender = $patient->gender;
-            $currentBfp = $latestBio->body_fat_percentage ?? null;
+            $currentBfp = $latestRecord->body_fat_percentage ?? null;
 
-            // 3. GERAÇÃO DO AVATAR
-            $avatarPath = DiagnosticService::generateAvatarPath($currentBfp, $gender);
+            // 3. GERAÇÃO DO AVATAR (!!! MUDANÇA IMPORTANTE AQUI !!!)
+            // Agora estamos passando o $bmi, o $currentBfp e o $gender
+            $avatarPath = DiagnosticService::generateAvatarPath($bmi, $currentBfp, $gender);
 
             // 4. CLASSIFICAÇÃO BFP (Gordura Corporal)
             if (isset($currentBfp)) {
@@ -127,23 +131,23 @@ class PatientController extends Controller
             }
 
             // 5. CLASSIFICAÇÃO SKM (Músculo Esquelético)
-            if (isset($latestBio->skeletal_muscle_percentage)) {
-                $skm = $latestBio->skeletal_muscle_percentage;
+            if (isset($latestRecord->skeletal_muscle_percentage)) {
+                $skm = $latestRecord->skeletal_muscle_percentage;
                 $skmClassification = DiagnosticService::classifySkeletalMuscle($skm, $gender);
                 $skmColorClass = DiagnosticService::getSkmColorClass($skmClassification);
             }
 
             // 6. CLASSIFICAÇÃO VFL (Gordura Visceral)
-            if (isset($latestBio->visceral_fat_level)) {
-                $vfl = $latestBio->visceral_fat_level;
+            if (isset($latestRecord->visceral_fat_level)) {
+                $vfl = $latestRecord->visceral_fat_level;
                 $vflClassification = DiagnosticService::classifyVisceralFat($vfl);
                 $vflColorClass = DiagnosticService::getVisceralFatColorClass($vflClassification);
             }
 
             // 7. CÁLCULO TMB
-            if (isset($latestBio->weight) && $patient->height) {
+            if (isset($latestRecord->weight) && $patient->height) {
                 $tmb = DiagnosticService::calculateTmb(
-                    $latestBio->weight, 
+                    $latestRecord->weight, 
                     $patient->height, 
                     $chronologicalAge, 
                     $gender
@@ -151,8 +155,8 @@ class PatientController extends Controller
             }
 
             // 8. CLASSIFICAÇÃO IDADE METABÓLICA (CORRIGIDO)
-            if (isset($latestBio->body_age)) { 
-                $metabolicAge = $latestBio->body_age; // <-- LÊ DA COLUNA CORRETA
+            if (isset($latestRecord->body_age)) { 
+                $metabolicAge = $latestRecord->body_age; // <-- LÊ DA COLUNA CORRETA
                 $metabolicAgeClassification = DiagnosticService::classifyMetabolicAge($metabolicAge, $chronologicalAge);
                 $metabolicAgeColorClass = DiagnosticService::getMetabolicAgeColorClass($metabolicAgeClassification);
             }
@@ -160,7 +164,7 @@ class PatientController extends Controller
 
         // 9. FORMATAÇÃO DE DADOS PARA GRÁFICOS
         $bio_chart_data = $patient->bioimpedanceRecords
-            ->reverse()
+            ->sortBy('created_at') // Ordena do mais antigo para o mais novo
             ->map(fn($record) => [
                 'date' => $record->created_at->format('d/m/Y'),
                 'weight' => $record->weight,
@@ -171,7 +175,7 @@ class PatientController extends Controller
             ->toJson();
 
         $measurements_chart_data = $patient->measurements
-            ->reverse()
+            ->sortBy('created_at') // Ordena do mais antigo para o mais novo
             ->map(fn($record) => [
                 'date' => $record->created_at->format('d/m/Y'),
                 'waist' => $record->waist,
@@ -183,7 +187,7 @@ class PatientController extends Controller
 
         return view('patients.show', [
             'patient' => $patient,
-            'latestBio' => $latestBio,
+            'latestRecord' => $latestRecord,
             'bmi' => $bmi,
             'bmiClassification' => $bmiClassification,
             'bmiColorClass' => $bmiColorClass,
@@ -196,7 +200,7 @@ class PatientController extends Controller
             'tmb' => $tmb,
             'metabolicAgeClassification' => $metabolicAgeClassification,
             'metabolicAgeColorClass' => $metabolicAgeColorClass,
-            'avatarPath' => $avatarPath,
+            'avatarName' => $avatarPath,
             'bio_chart_data' => $bio_chart_data,
             'measurements_chart_data' => $measurements_chart_data,
         ]);
