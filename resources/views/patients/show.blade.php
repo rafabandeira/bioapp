@@ -106,7 +106,7 @@
                             </dd>
                         </div>
 
-<div>
+                        <div>
                             <dt class="text-sm font-medium text-gray-500">Músculo Esquelético</dt>
                             <dd class="mt-1 text-sm text-gray-900">
                                 @if($latestRecord && $latestRecord->skeletal_muscle_percentage)
@@ -138,7 +138,7 @@
                             </dd>
                         </div>
 
-<div>
+                        <div>
                             <dt class="text-sm font-medium text-gray-500">Metabolismo Basal (TMB)</dt>
                             <dd class="mt-1 text-sm text-gray-900">
                                 @if($tmb)
@@ -202,7 +202,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-medium text-gray-900">Histórico de Bioimpedância</h3>
+                        <h3 class="text-lg font-medium text-gray-900">Histórico de Bioimpedância </h3>
                         <a href="{{ route('patients.bioimpedance-records.create', $patient) }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700">
                             + Adicionar
                         </a>
@@ -225,7 +225,7 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse ($patient->bioimpedanceRecords as $record)
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $record->created_at->format('d/m/Y') }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $record->recorded_at->format('d/m/Y') }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $record->weight ?? 'N/A' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $record->body_fat_percentage ?? 'N/A' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $record->skeletal_muscle_percentage ?? 'N/A' }}</td>
@@ -280,7 +280,7 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse ($patient->measurements as $record)
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $record->created_at->format('d/m/Y') }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $record->recorded_at->format('d/m/Y') }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $record->neck ?? 'N/A' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $record->chest ?? 'N/A' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $record->waist ?? 'N/A' }}</td>
@@ -313,7 +313,7 @@
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-lg font-medium text-gray-900">Histórico de Avaliações (Anamnese)</h3>
                         <a href="{{ route('patients.evaluations.create', $patient) }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700">
-                            + Adicionar Avaliação
+                            + Adicionar
                         </a>
                     </div>
                     
@@ -330,7 +330,7 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse ($patient->evaluations as $record)
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $record->created_at->format('d/m/Y H:i') }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $record->recorded_at->format('d/m/Y H:i') }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $record->qp ?? 'N/A' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ Str::limit($record->objectives, 50) ?? 'N/A' }}</td>
                                         

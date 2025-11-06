@@ -81,7 +81,7 @@
                                         <p class="text-sm font-medium text-gray-900">{{ $bio->patient->name }}</p>
                                         <p class="text-sm text-gray-500">{{ $bio->weight }} kg | {{ $bio->body_fat_percentage }}% GC</p>
                                     </div>
-                                    <span class="text-sm text-gray-500">{{ $bio->created_at->format('d/m/y') }}</span>
+                                    <span class="text-sm text-gray-500">{{ $bio->recorded_at->format('d/m/y') }}</span>
                                 </li>
                             @empty
                                 <li class="py-3 text-sm text-gray-500">Nenhum registro encontrado.</li>
@@ -100,7 +100,7 @@
                                         <p class="text-sm font-medium text-gray-900">{{ $measurement->patient->name }}</p>
                                         <p class="text-sm text-gray-500">Cintura: {{ $measurement->waist }} cm</p>
                                     </div>
-                                    <span class="text-sm text-gray-500">{{ $measurement->created_at->format('d/m/y') }}</span>
+                                    <span class="text-sm text-gray-500">{{ $measurement->recorded_at->format('d/m/y') }}</span>
                                 </li>
                             @empty
                                 <li class="py-3 text-sm text-gray-500">Nenhum registro encontrado.</li>
@@ -119,7 +119,7 @@
                                         <p class="text-sm font-medium text-gray-900">{{ $evaluation->patient->name }}</p>
                                         <p class="text-sm text-gray-500 truncate">{{ Str::limit($evaluation->complaints, 30) }}</p>
                                     </div>
-                                    <span class="text-sm text-gray-500">{{ $evaluation->created_at->format('d/m/y') }}</span>
+                                    <span class="text-sm text-gray-500">{{ $evaluation->recorded_at->format('d/m/y') }}</span>
                                 </li>
                             @empty
                                 <li class="py-3 text-sm text-gray-500">Nenhum registro encontrado.</li>

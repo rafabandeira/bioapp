@@ -22,6 +22,7 @@ class BioimpedanceRecordController extends Controller
             'visceral_fat_level' => 'nullable|integer|min:0|max:100',
             'basal_metabolism_kcal' => 'nullable|integer|min:0|max:10000',
             'body_age' => 'nullable|integer|min:0|max:150',
+            'recorded_at' => 'required|date',
         ]);
     }
 

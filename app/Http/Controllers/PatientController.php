@@ -82,7 +82,7 @@ class PatientController extends Controller
         $patient->load('bioimpedanceRecords', 'measurements', 'evaluations');
         
         // Ordena pela data de criação, do mais novo para o mais antigo
-        $latestRecord = $patient->bioimpedanceRecords()->latest('created_at')->first();
+        $latestRecord = $patient->bioimpedanceRecords()->latest('recorded_at')->first();
 
         // Variáveis de Diagnóstico
         $bmi = null;

@@ -30,19 +30,19 @@ class DashboardController extends Controller
         // Isso evita 100 consultas ao banco (problema N+1)
         $latestBios = $user->bioimpedanceRecords()
                             ->with('patient') // Pega os dados do paciente junto
-                            ->latest('created_at') // Ordena pelo mais novo
+                            ->latest('recorded_at') // Ordena pelo mais novo
                             ->take(5) // Pega os 5 últimos
                             ->get();
 
         $latestMeasurements = $user->measurements()
                             ->with('patient')
-                            ->latest('created_at')
+                            ->latest('recorded_at')
                             ->take(5)
                             ->get();
         
         $latestEvaluations = $user->evaluations()
                             ->with('patient')
-                            ->latest('created_at')
+                            ->latest('recorded_at')
                             ->take(5)
                             ->get();
 

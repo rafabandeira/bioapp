@@ -15,6 +15,8 @@ class Evaluation extends Model
     protected function casts(): array
     {
         return [
+            'recorded_at' => 'date',
+            
             // Antecedentes
             'circulatory_disorder' => 'boolean',
             'circulatory_family_history' => 'boolean',
