@@ -67,10 +67,44 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $patient->email ?? 'N/A' }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                                            <a href="{{ route('patients.show', $patient) }}" class="text-gray-600 hover:text-gray-900">Ver</a>
-                                            <a href="{{ route('patients.edit', $patient) }}" class="text-blue-600 hover:text-blue-900">Editar</a>
+                                                                                
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <div class="flex justify-end items-center space-x-2">
+                                                
+                                                <a href="{{ route('patients.show', $patient) }}" title="Ver Paciente"
+                                                class="text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out p-1 border-none bg-transparent">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                                    </svg>
+                                                </a>
+
+                                                <a href="{{ route('patients.edit', $patient) }}" title="Editar"
+                                                class="text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out p-1 border-none bg-transparent">
+                                                    
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentcolor" viewBox="0 0 24 24" class="w-5 h-5">
+                                                    <path d="M21,12a1,1,0,0,0-1,1v6a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V5A1,1,0,0,1,5,4h6a1,1,0,0,0,0-2H5A3,3,0,0,0,2,5V19a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V13A1,1,0,0,0,21,12ZM6,12.76V17a1,1,0,0,0,1,1h4.24a1,1,0,0,0,.71-.29l6.92-6.93h0L21.71,8a1,1,0,0,0,0-1.42L17.47,2.29a1,1,0,0,0-1.42,0L13.23,5.12h0L6.29,12.05A1,1,0,0,0,6,12.76ZM16.76,4.41l2.83,2.83L18.17,8.66,15.34,5.83ZM8,13.17l5.93-5.93,2.83,2.83L10.83,16H8Z"/>
+                                                    </svg>
+                                                </a>
+
+                                                <form action="{{ route('patients.destroy', $patient) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja deletar o paciente {{ $patient->name }}? Esta ação não pode ser desfeita.');" class="inline-block">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" title="Deletar Paciente"
+                                                            class="text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out p-1 border-none bg-transparent">
+                                                        
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5">
+                                                            {{-- Usando fill="currentColor" para herdar a cor do Tailwind --}}
+                                                            <path d="M20,6H16V5a3,3,0,0,0-3-3H11A3,3,0,0,0,8,5V6H4A1,1,0,0,0,4,8H5V19a3,3,0,0,0,3,3h8a3,3,0,0,0,3-3V8h1a1,1,0,0,0,0-2ZM10,5a1,1,0,0,1,1-1h2a1,1,0,0,1,1,1V6H10Zm7,14a1,1,0,0,1-1,1H8a1,1,0,0,1-1-1V8H17Z" fill="currentColor"/>
+                                                        </svg>
+                                                    </button>
+                                                </form>
+
+                                            </div>
                                         </td>
+
+
+                                        
                                     </tr>
                                 @empty
                                     <tr>
