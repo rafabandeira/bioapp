@@ -141,9 +141,10 @@
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Idade Metabólica</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                @if($latestBio && $latestBio->metabolic_age)
+                                {{-- Usar a propriedade body_age lida pelo Controller --}}
+                                @if($latestBio && isset($latestBio->body_age))
                                     <span class="font-bold text-lg {{ $metabolicAgeColorClass }}">
-                                        {{ $latestBio->metabolic_age }} anos
+                                        {{ $latestBio->body_age }} anos
                                     </span>
                                     <span class="text-sm {{ $metabolicAgeColorClass }}">
                                         ({{ $metabolicAgeClassification }})
@@ -202,6 +203,8 @@
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Peso (kg)</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Gordura (%)</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Músculo (%)</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">TMB (kcal)</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Idade Corp.</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Gord. Visc.</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ações</th>
                                 </tr>
@@ -210,9 +213,11 @@
                                 @forelse ($patient->bioimpedanceRecords as $record)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $record->created_at->format('d/m/Y') }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $record->weight }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $record->weight ?? 'N/A' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $record->body_fat_percentage ?? 'N/A' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $record->skeletal_muscle_percentage ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $record->basal_metabolism_kcal ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $record->body_age ?? 'N/A' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $record->visceral_fat_level ?? 'N/A' }}</td>
                                         
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
@@ -226,7 +231,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+                                        <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">
                                             Nenhum registro de bioimpedância encontrado.
                                         </td>
                                     </tr>

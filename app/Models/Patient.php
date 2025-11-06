@@ -46,6 +46,15 @@ class Patient extends Model
     }
 
     /**
+     * NOVO: Relacionamento para o último registo de bioimpedância.
+     * Usado para otimizar a listagem de pacientes (index).
+     */
+    public function latestBioimpedanceRecord(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(BioimpedanceRecord::class)->latestOfMany();
+    }
+
+    /**
      * Todos os registos de medidas deste paciente.
      */
     public function measurements(): HasMany

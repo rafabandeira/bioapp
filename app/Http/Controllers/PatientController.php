@@ -14,10 +14,22 @@ class PatientController extends Controller
     /**
      * Mostra a lista de pacientes
      */
-    public function index()
+    public function index(Request $request)
     {
-        $patients = Auth::user()->patients()->latest()->get();
+        $query = Auth::user()->patients()
+            ->with(['bioimpedanceRecords' => fn($q) => $q->latest()->limit(1)])
+            ->orderBy('name', 'asc');
 
+        // Pesquisa
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $patients = $query->paginate(15)->withQueryString();
 
         return view('patients.index', [
             'patients' => $patients,
@@ -70,7 +82,7 @@ class PatientController extends Controller
         $patient->load('bioimpedanceRecords', 'measurements', 'evaluations');
         
         $latestBio = $patient->bioimpedanceRecords->first();
-        
+
         // Variáveis de Diagnóstico
         $bmi = null;
         $bmiClassification = null;
