@@ -84,6 +84,21 @@ class PatientController extends Controller
         // Ordena pela data de criação, do mais novo para o mais antigo
         $latestRecord = $patient->bioimpedanceRecords()->latest('recorded_at')->first();
 
+        // Obter o penúltimo registro (o registro ANTERIOR)
+        $previousRecord = $patient->bioimpedanceRecords()
+            ->where('recorded_at', '<', $latestRecord->recorded_at) // Garante que é anterior à data do último
+            ->orderBy('recorded_at', 'desc') // Ordena pela data mais nova
+            ->first(); // Pega o primeiro dessa lista (o penúltimo geral)
+
+        // Obter o primeiro registro (o registro GERAL)
+        $firstRecord = $patient->bioimpedanceRecords()
+                           ->orderBy('recorded_at', 'asc') 
+                           ->first();
+
+        $allBioRecords = $patient->bioimpedanceRecords()
+        ->orderBy('recorded_at', 'desc') // Mais recente primeiro
+        ->get();
+
         // Variáveis de Diagnóstico
         $bmi = null;
         $bmiClassification = null;
@@ -203,7 +218,11 @@ class PatientController extends Controller
             'avatarName' => $avatarPath,
             'bio_chart_data' => $bio_chart_data,
             'measurements_chart_data' => $measurements_chart_data,
+            'previousRecord' => $previousRecord, 
+            'firstRecord' => $firstRecord,
+            'allBioRecords' => $allBioRecords
         ]);
+
     }
 
     /**

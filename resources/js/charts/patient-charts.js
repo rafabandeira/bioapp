@@ -22,32 +22,59 @@ window.renderPatientCharts = function (bioDataJson, measurementsDataJson) {
         return;
     }
 
-    // --- GRÁFICO 1: BIOIMPEDÂNCIA ---
+    /// --- GRÁFICO 1: BIOIMPEDÂNCIA - Focado Apenas no Peso ---
     if (Array.isArray(bioData) && bioData.length > 0) {
         const dates = bioData.map(record => record.date);
         const weightData = bioData.map(record => record.weight);
-        const fatData = bioData.map(record => record.body_fat_percentage);
-        const muscleData = bioData.map(record => record.skeletal_muscle_percentage);
+        
+        // As variáveis fatData e muscleData são calculadas, mas não usadas.
 
         const bioChartElement = document.getElementById('bioimpedanceChart');
         if (bioChartElement) {
-            console.log("CHART SCRIPT: Renderizando Gráfico de Bioimpedância...");
+            console.log("CHART SCRIPT: Renderizando Gráfico de Peso...");
             new Chart(bioChartElement, {
                 type: 'line',
                 data: {
                     labels: dates,
                     datasets: [
-                        { label: 'Peso (kg)', data: weightData, borderColor: 'rgb(75, 192, 192)', tension: 0.3, yAxisID: 'yPeso' },
-                        { label: 'Gordura (%)', data: fatData, borderColor: 'rgb(255, 99, 132)', tension: 0.3, yAxisID: 'yPercentual', hidden: true },
-                        { label: 'Músculo (%)', data: muscleData, borderColor: 'rgb(54, 162, 235)', tension: 0.3, yAxisID: 'yPercentual', hidden: true }
+                        { 
+                            label: 'Peso (kg)', 
+                            data: weightData, 
+                            borderColor: 'rgb(75, 192, 192)', // Mantive sua cor
+                            backgroundColor: 'rgba(75, 192, 192, 0.5)', // Cor dos pontos
+                            tension: 0.4, // Linha Curva (0.4 é uma boa suavidade)
+                            yAxisID: 'yPeso',
+                            fill: false, // Não preenche a área abaixo da linha
+                            borderWidth: 3,
+                            pointRadius: 4 // Deixa os pontos visíveis
+                        }
+                        // REMOVIDOS OS DATASETS DE GORDURA E MÚSCULO
                     ]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false, // Permite controlar a altura no CSS
                     scales: {
-                        yPeso: { type: 'linear', display: 'auto', position: 'left', title: { display: true, text: 'Peso (kg)' }},
-                        yPercentual: { type: 'linear', display: 'auto', position: 'right', title: { display: true, text: 'Percentual (%)' }, grid: { drawOnChartArea: false }},
-                        x: { title: { display: true, text: 'Data' }}
+                        // MANTIDO APENAS O EIXO Y PARA O PESO
+                        yPeso: { 
+                            type: 'linear', 
+                            display: true, 
+                            position: 'left', 
+                            title: { 
+                                display: true, 
+                                text: 'Peso (kg)' 
+                            },
+                            beginAtZero: false // Não precisa começar em zero para peso
+                        },
+                        // REMOVIDO O EIXO yPercentual
+                        x: { 
+                            title: { display: true, text: 'Data de Aferição' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false // Não precisa de legenda, pois é um dataset único
+                        }
                     }
                 }
             });

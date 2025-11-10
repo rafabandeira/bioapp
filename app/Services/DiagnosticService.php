@@ -172,24 +172,32 @@ class DiagnosticService
     {
         if (!$metabolicAge || !$chronologicalAge) return null;
 
-        $diff = $metabolicAge - $chronologicalAge;
+        $diff = $metabolicAge - $chronologicalAge; // Ex: 44 - 47 = -3
 
+        // CORRIGIDO: Garante que resultados mais jovens caiam em 'Boa' ou 'Excelente'
         if ($diff <= -10) return 'Excelente (Muito Jovem)';
-        if ($diff <= -5) return 'Boa (Jovem)';
-        if ($diff <= 4) return 'Normal';
+        if ($diff < 0) return 'Boa (Jovem)'; // <-- CORREÇÃO: -9 até -1 cairão aqui (incluindo o seu -3)
+        
+        // Resultados de 0 a +4 (47 a 51 anos de idade metabólica)
+        if ($diff <= 4) return 'Na Faixa'; 
+        
         if ($diff <= 9) return 'Elevada (Mais Velha)';
+        
         return 'Muito Elevada (Perigo)';
     }
-
     /**
      * Retorna a cor para a Idade Metabólica
      */
     public static function getMetabolicAgeColorClass($classification)
     {
         switch ($classification) {
-            case 'Excelente (Muito Jovem)':
-            case 'Boa (Jovem)': return 'text-green-600';
-            case 'Normal': return 'text-yellow-600';
+            // EXCELENTE E BOA AGORA SÃO VERDE
+            case 'Excelente (Muito Jovem)': return 'text-green-600'; 
+            case 'Boa (Jovem)': return 'text-green-600'; 
+            
+            // NORMAL é a zona de ATENÇÃO (Amarelo/Laranja)
+            case 'Na Faixa': return 'text-yellow-600'; 
+            
             case 'Elevada (Mais Velha)': return 'text-orange-600';
             case 'Muito Elevada (Perigo)': return 'text-red-600';
             default: return 'text-gray-900';
