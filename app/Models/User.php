@@ -24,6 +24,38 @@ class User extends Authenticatable
     ];
 
     /**
+     * Um usuário (profissional) tem muitos pacientes.
+     */
+    public function patients()
+    {
+        return $this->hasMany(Patient::class);
+    }
+
+    /**
+     * Um usuário tem muitos registros de bioimpedância ATRAVÉS de seus pacientes.
+     */
+    public function bioimpedanceRecords()
+    {
+        return $this->hasManyThrough(BioimpedanceRecord::class, Patient::class);
+    }
+
+    /**
+     * Um usuário tem muitas medições ATRAVÉS de seus pacientes.
+     */
+    public function measurements()
+    {
+        return $this->hasManyThrough(Measurement::class, Patient::class);
+    }
+
+    /**
+     * Um usuário tem muitas avaliações ATRAVÉS de seus pacientes.
+     */
+    public function evaluations()
+    {
+        return $this->hasManyThrough(Evaluation::class, Patient::class);
+    }
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
@@ -46,11 +78,4 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * Um Usuário (profissional) pode ter muitos pacientes.
-     */
-    public function patients(): HasMany
-    {
-        return $this->hasMany(Patient::class);
-    }
 }

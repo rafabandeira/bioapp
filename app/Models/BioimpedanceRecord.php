@@ -10,14 +10,20 @@ class BioimpedanceRecord extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'patient_id',
-        'weight',
-        'body_fat_percentage',
-        'skeletal_muscle_percentage',
-        'visceral_fat_level',
-        'body_age', // CORRIGIDO
-    ];
+    protected $guarded = [];
+
+    protected function casts(): array
+    {
+        return [
+            'weight' => 'decimal:1',
+            'body_fat_percentage' => 'decimal:1',
+            'skeletal_muscle_percentage' => 'decimal:1',
+            'visceral_fat_level' => 'integer',
+            'body_age' => 'integer',
+            'basal_metabolism_kcal' => 'integer',
+            'recorded_at' => 'date'
+        ];
+    }
 
     /**
      * O paciente a que este registo pertence.

@@ -13,7 +13,7 @@ class Measurement extends Model
     protected $guarded = [];
 
     protected function casts(): array
-    {
+    {     
         return [
             'neck' => 'decimal:1',
             'chest' => 'decimal:1',
@@ -27,6 +27,7 @@ class Measurement extends Model
             'thigh_left' => 'decimal:1',
             'calf_right' => 'decimal:1',
             'calf_left' => 'decimal:1',
+            'recorded_at' => 'date'
         ];
     }
 

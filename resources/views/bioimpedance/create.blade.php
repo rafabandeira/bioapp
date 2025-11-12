@@ -16,6 +16,18 @@
                         <div class="grid grid-cols-2 gap-6 sm:grid-cols-4">
                             
                             <div>
+                                <x-input-label for="recorded_at" :value="__('Data da Aferição')" />
+
+                                <x-text-input id="recorded_at" class="block mt-1 w-full"
+                                            type="date"  {{-- MUDANÇA 1: de datetime-local para date --}}
+                                            name="recorded_at"
+                                            :value="old('recorded_at', now()->format('Y-m-d'))" {{-- MUDANÇA 2: formato mais simples --}}
+                                            required />
+
+                                <x-input-error :messages="$errors->get('recorded_at')" class="mt-2" />
+                            </div>
+
+                            <div>
                                 <x-input-label for="weight" :value="__('Peso (kg)')" />
                                 <x-text-input id="weight" class="block mt-1 w-full" type="number" step="0.1" name="weight" :value="old('weight')" required />
                                 <x-input-error class="mt-2" :messages="$errors->get('weight')" />

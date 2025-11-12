@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\BioimpedanceRecord;
 
 class Patient extends Model
 {
@@ -42,7 +43,7 @@ class Patient extends Model
      */
     public function bioimpedanceRecords(): HasMany
     {
-        return $this->hasMany(BioimpedanceRecord::class)->orderBy('created_at', 'desc');
+        return $this->hasMany(BioimpedanceRecord::class)->orderBy('recorded_at', 'desc');
     }
 
     /**
@@ -51,7 +52,7 @@ class Patient extends Model
      */
     public function latestBioimpedanceRecord(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(BioimpedanceRecord::class)->latestOfMany();
+        return $this->hasOne(BioimpedanceRecord::class)->latestOfMany('recorded_at');
     }
 
     /**
@@ -59,7 +60,7 @@ class Patient extends Model
      */
     public function measurements(): HasMany
     {
-        return $this->hasMany(Measurement::class)->orderBy('created_at', 'desc');
+        return $this->hasMany(Measurement::class)->orderBy('recorded_at', 'desc');
     }
 
     /**
@@ -67,6 +68,6 @@ class Patient extends Model
      */
     public function evaluations(): HasMany
     {
-        return $this->hasMany(Evaluation::class)->orderBy('created_at', 'desc');
+        return $this->hasMany(Evaluation::class)->orderBy('recorded_at', 'desc');
     }
 }
